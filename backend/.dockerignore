@@ -1,0 +1,38 @@
+# =============================================================================
+# Docker Ignore - Backend Spring Boot
+# =============================================================================
+
+# Target/Build
+target/
+build/
+*.jar
+!*.jar.original
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+
+# Maven
+.mvn/repository/
+
+# Temporales
+*.tmp
+*.bak
+*.swp
+

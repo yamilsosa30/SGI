@@ -1,0 +1,200 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Updated color tokens to match POS design brief */
+  --background: #ffffff;
+  --foreground: #4b5563;
+  --card: #fffbeb;
+  --card-foreground: #4b5563;
+  --popover: #ffffff;
+  --popover-foreground: #4b5563;
+  --primary: #ea580c;
+  --primary-foreground: #ffffff;
+  --secondary: #f97316;
+  --secondary-foreground: #ffffff;
+  --muted: #f9fafb;
+  --muted-foreground: #4b5563;
+  --accent: #f97316;
+  --accent-foreground: #ffffff;
+  --destructive: #be123c;
+  --destructive-foreground: #ffffff;
+  --border: #e5e7eb;
+  --input: #ffffff;
+  --ring: rgba(234, 88, 12, 0.7);
+  --chart-1: #ea580c;
+  --chart-2: #f97316;
+  --chart-3: #fffbeb;
+  --chart-4: #4b5563;
+  --chart-5: #ffffff;
+  --radius: 0.5rem;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #4b5563;
+  --sidebar-primary: #ea580c;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f97316;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #e5e7eb;
+  --sidebar-ring: rgba(234, 88, 12, 0.5);
+}
+
+/* Modo oscuro estándar */
+.dark {
+  --background: #0b0f1a; /* casi negro azulado */
+  --foreground: #e5e7eb; /* slate-200 */
+  --card: #0f172a; /* slate-900 */
+  --card-foreground: #e5e7eb;
+  --popover: #0b1220;
+  --popover-foreground: #e5e7eb;
+  --primary: #ea580c; /* mantenemos el acento naranja */
+  --primary-foreground: #ffffff;
+  --secondary: #1f2937; /* slate-800 */
+  --secondary-foreground: #e5e7eb;
+  --muted: #111827; /* gray-900 */
+  --muted-foreground: #9ca3af; /* gray-400 */
+  --accent: #334155; /* slate-700 */
+  --accent-foreground: #e5e7eb;
+  --destructive: #7f1d1d; /* red-900 */
+  --destructive-foreground: #fecaca; /* red-200 */
+  --border: #1f2937; /* slate-800 */
+  --input: #738cc6;
+  --ring: rgba(234, 88, 12, 0.45);
+  --chart-1: #f59e0b;
+  --chart-2: #ef4444;
+  --chart-3: #10b981;
+  --chart-4: #3b82f6;
+  --chart-5: #a78bfa;
+  --sidebar: #0b0f1a;
+  --sidebar-foreground: #e5e7eb;
+  --sidebar-primary: #ea580c;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #334155;
+  --sidebar-accent-foreground: #e5e7eb;
+  --sidebar-border: #111827;
+  --sidebar-ring: rgba(234, 88, 12, 0.6);
+}
+
+/* Selección de texto más notoria*/
+::selection {
+  background-color: color-mix(in oklab, var(--primary) 80%, transparent);
+  color: var(--primary-foreground);
+}
+.dark ::selection {
+  background-color: color-mix(in oklab, var(--primary) 70%, transparent);
+  color: var(--primary-foreground);
+}
+
+/* En foco, dar un leve tinte al fondo del campo para distinguirlo mejor */
+[data-slot="input"]:focus,
+[data-slot="textarea"]:focus {
+  background-color: color-mix(in oklab, var(--primary) 16%, var(--input));
+}
+.dark [data-slot="input"]:focus,
+.dark [data-slot="textarea"]:focus {
+  background-color: color-mix(in oklab, var(--primary) 14%, var(--input));
+}
+
+/* Tinte leve al pasar el mouse para mejorar detectabilidad */
+[data-slot="input"]:hover,
+[data-slot="textarea"]:hover {
+  background-color: color-mix(in oklab, var(--primary) 6%, var(--input));
+}
+.dark [data-slot="input"]:hover,
+.dark [data-slot="textarea"]:hover {
+  background-color: color-mix(in oklab, var(--primary) 5%, var(--input));
+}
+
+@theme inline {
+  /* Updated font configuration for POS system */
+  --font-sans: "Geist Sans", system-ui, -apple-system, sans-serif;
+  --font-mono: "Manrope", monospace;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+}
+
+/* Added POS-specific styles */
+.pos-grid {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  height: 100vh;
+}
+
+.barcode-scanner {
+  background: linear-gradient(135deg, #ea580c 0%, #f97316 100%);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.alert-badge {
+  animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}

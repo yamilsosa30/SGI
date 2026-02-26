@@ -1,0 +1,55 @@
+# ===========================================
+# SGIK POS - Git Ignore
+# ===========================================
+
+# ----- Dependencias -----
+node_modules/
+.pnp
+.pnp.js
+
+# ----- Build outputs -----
+.next/
+out/
+build/
+dist/
+backend/target/
+
+# ----- Logs -----
+*.log
+logs/
+npm-debug.log*
+
+# ----- Environment -----
+.env
+.env.local
+.env.*.local
+
+# ----- IDE -----
+.idea/
+.vscode/
+*.swp
+*.swo
+*.iml
+
+# ----- OS -----
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ----- Docker images (muy pesadas) -----
+docker/images/*.tar
+*.tar
+
+# ----- Backups locales -----
+backups/
+
+# ----- Temporales -----
+temp_*
+*.tmp
+*.bak
+tsconfig.tsbuildinfo
+
+# ----- Testing -----
+coverage/
+.nyc_output/
+.pids/

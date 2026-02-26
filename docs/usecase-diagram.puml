@@ -1,0 +1,78 @@
+@startuml
+' Diagrama de Casos de Uso - Sistema para Kioscos (corregido)
+
+skinparam actorStyle awesome
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam roundcorner 20
+skinparam linetype ortho
+
+title Diagrama de Casos de Uso - Sistema Especializado para Kioscos
+
+actor "Dueño/Administrador" as Admin
+actor "Cajero/Empleado" as Clerk
+
+rectangle "Sistema de Gestión para Kioscos" {
+  ' Maestros
+  package "Maestros" {
+    usecase "ABM Producto" as UC_Prod
+    usecase "ABM Categoría" as UC_Cat
+    usecase "ABM Proveedor" as UC_Prov
+    usecase "ABM Cliente (solo fiado)" as UC_Cliente
+  }
+  
+  ' Ventas y Cobros
+  package "Ventas y Cobros" {
+    usecase "Gestión caja registradora" as UC_Caja
+    usecase "Venta fiada a cliente" as UC_Venta_Fiado
+    usecase "Registrar cobro de fiado" as UC_Cobro_Fiado
+  }
+  
+  ' Compras
+  package "Compras" {
+    usecase "Registrar compra a proveedor" as UC_Compra
+  }
+  
+  ' Inventario (unifica Ajuste + Alertas)
+  package "Inventario" {
+    usecase "Gestión inventario" as UC_Inventario
+  }
+  
+  ' Reportes (unifica los 3 reportes básicos)
+  package "Reportes" {
+    usecase "Gestión reportes" as UC_Reportes
+  }
+
+  ' Configuraciones
+  package "Configuraciones" {
+    usecase "Gestión de configuraciones de alertas" as UC_ConfigAlertas
+  }
+}
+
+' Relaciones
+Admin --> UC_Prod
+Admin --> UC_Cat
+Admin --> UC_Prov
+Admin --> UC_Cliente
+Admin --> UC_Inventario
+Admin --> UC_Reportes
+Admin --> UC_ConfigAlertas
+
+Clerk --> UC_Caja
+Clerk --> UC_Venta_Fiado
+Clerk --> UC_Cobro_Fiado
+Clerk --> UC_Compra
+
+
+' Nota: Se eliminó el actor "Sistema". Fiado se modela como <<extend>> de Caja.
+' Si se quiere detallar subpasos de caja (escanear, seleccionar pago, registrar pago),
+' pueden modelarse como includes desde UC_Caja de forma opcional.
+
+UC_Venta_Fiado ..> UC_Caja : <<extend>>
+UC_Cobro_Fiado ..> UC_Caja : <<extend>>
+
+note right of UC_Venta_Fiado
+  Requiere seleccionar Cliente
+end note
+
+@enduml

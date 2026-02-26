@@ -1,0 +1,70 @@
+# =============================================================================
+# Docker Ignore - SGIK POS
+# Archivos que no deben incluirse en las imágenes Docker
+# =============================================================================
+
+# Dependencias
+node_modules
+.pnp
+.pnp.js
+
+# Next.js
+.next
+out
+
+# Logs
+*.log
+logs/
+
+# Archivos de desarrollo
+.env
+.env.*
+!.env.example
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+
+# Documentación
+docs/
+Manuales/
+*.md
+!README.md
+
+# Tests
+__tests__
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+
+# Docker (no necesitamos recursión)
+docker/images/
+docker/scripts/
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# Temporales
+temp_*
+*.tmp
+*.bak
+
+# Backend específico
+backend/target/
+backend/.mvn/
+backend/*.log
+
+# Screenshots
+screenshots/
+
