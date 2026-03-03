@@ -28,22 +28,24 @@ if errorlevel 1 (
 
 echo       Base de datos 'sgik' creada.
 
-echo [2/2] Importando esquema...
+echo [2/2] Importando esquema y datos iniciales...
 mysql -u %MYSQL_USER% -p%MYSQL_PASS% sgik < database\schema-mysql.sql
+mysql -u %MYSQL_USER% -p%MYSQL_PASS% sgik < database\data-mysql.sql
 
 if errorlevel 1 (
-    echo [ERROR] No se pudo importar el esquema.
+    echo [ERROR] No se pudieron importar los datos.
     pause
     exit /b 1
 )
 
-echo       Esquema importado correctamente.
+echo       Datos importados correctamente.
 
 echo.
 echo ╔══════════════════════════════════════════════════════════════════════════╗
 echo ║                    BASE DE DATOS CREADA                                  ║
 echo ╠══════════════════════════════════════════════════════════════════════════╣
 echo ║   Base de datos: sgik                                                    ║
+echo ║   Usuarios creados: admin/admin123 - cajero/cajero123                  ║
 echo ║   El sistema creara las tablas automaticamente al iniciar.              ║
 echo ╚══════════════════════════════════════════════════════════════════════════╝
 echo.

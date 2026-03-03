@@ -17,6 +17,8 @@ public class DataBootstrap {
   @Bean
   CommandLineRunner initUsers(UserRepository userRepository, PasswordEncoder encoder) {
     return args -> {
+      // Los usuarios ya se crean en el schema SQL: database/schema-mysql.sql
+      // Este método es solo por seguridad extra en caso de que no se haya importado el schema
       if (userRepository.count() == 0) {
         User admin =
             User.builder()
@@ -35,6 +37,8 @@ public class DataBootstrap {
         userRepository.save(admin);
         userRepository.save(cashier);
         log.info("Usuarios iniciales creados: admin/cajero");
+      } else {
+        log.info("Los usuarios ya existen en la base de datos");
       }
     };
   }

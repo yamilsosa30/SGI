@@ -24,6 +24,11 @@ CREATE TABLE IF NOT EXISTS users (
   CONSTRAINT chk_user_role CHECK (role IN ('ADMIN','CASHIER'))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Insertar usuarios por defecto
+INSERT INTO users (username, password, role, active) VALUES 
+('admin', 'admin123', 'ADMIN', 1),
+('cajero', 'cajero123', 'CASHIER', 1);
+
 -- Tabla: customers
 CREATE TABLE IF NOT EXISTS customers (
   id BIGINT NOT NULL AUTO_INCREMENT,

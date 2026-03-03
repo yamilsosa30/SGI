@@ -83,5 +83,11 @@ El sistema usa estos valores por defecto:
 Si tu MySQL tiene otra configuracion, edita:
 backend\src\main\resources\application.properties
 
+USUARIOS DEL SISTEMA:
+---------------------
+Al crear la base de datos se crean automáticamente:
+- Usuario: admin / Password: admin123 (Administrador)
+- Usuario: cajero / Password: cajero123 (Cajero)
+
 ================================================================================
 
