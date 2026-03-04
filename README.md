@@ -17,7 +17,21 @@ Si no tenés alguno, los links de descarga están al final de este archivo.
 
 ## Instalación paso a paso
 
-### 1. Clonar y entrar al proyecto
+### 1.1 Instalar Homebrew (macOS)
+
+Si usás macOS y no tenés Homebrew, primero instalalo. Es un gestor de paquetes muy útil que te va a facilitar instalar todo lo demás:
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+Seguí las instrucciones en pantalla. Después de instalar, verificá que funcione:
+
+```bash
+brew --version
+```
+
+### 2. Clonar y entrar al proyecto
 
 ```bash
 git clone <url-del-repo> sgik

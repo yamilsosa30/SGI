@@ -42,6 +42,17 @@ public class ReportService {
   private final PurchaseItemRepository purchaseItemRepository;
   private final PurchaseRepository purchaseRepository;
 
+  // ============================================================================
+  // REPORTE: Productos Más Vendidos
+  // ============================================================================
+
+  /**
+   * Obtiene los productos más vendidos en un período.
+   * @param startDate Fecha de inicio (si es null, usa últimos 30 días)
+   * @param endDate Fecha de fin (si es null, usa hoy)
+   * @param limit Cantidad máxima de productos a retornar (0 = sin límite)
+   * @return Lista de productos con cantidad vendida y revenue total
+   */
   public List<TopProductDTO> getTopProducts(LocalDate startDate, LocalDate endDate, int limit) {
     LocalDate s = (startDate != null) ? startDate : LocalDate.now().minusDays(30);
     LocalDate e = (endDate != null) ? endDate : LocalDate.now();
@@ -63,6 +74,17 @@ public class ReportService {
     return list;
   }
 
+  // ============================================================================
+  // REPORTE: Resumen de Ventas
+  // ============================================================================
+
+  /**
+   * Genera reporte de ventas agrupado por período.
+   * @param period Tipo de período (DAILY, WEEKLY, MONTHLY, YEARLY)
+   * @param from Fecha inicio
+   * @param to Fecha fin
+   * @return Lista de ventas por período
+   */
   public List<SalesSummaryRow> getSalesSummary(SummaryPeriod period, LocalDate from, LocalDate to) {
     if (period == null) period = SummaryPeriod.DAILY;
     // Rango por defecto según período
@@ -115,6 +137,9 @@ public class ReportService {
     return rows;
   }
 
+  /**
+   * Genera PDF del reporte de ventas.
+   */
   public byte[] generateSalesSummaryPdf(SummaryPeriod period, LocalDate from, LocalDate to) {
     List<SalesSummaryRow> summary = getSalesSummary(period, from, to);
 
@@ -185,7 +210,17 @@ public class ReportService {
     return baos.toByteArray();
   }
 
-  // ==== Cashflow (Compras vs Ventas) ====
+  // ============================================================================
+  // REPORTE: Cashflow (Compras vs Ventas)
+  // ============================================================================
+
+  /**
+   * Genera reporte de flujo de caja: compras (egresos) vs ventas (ingresos).
+   * @param period Tipo de período
+   * @param from Fecha inicio
+   * @param to Fecha fin
+   * @return Lista con compras, ventas y diferencia por período
+   */
   public List<CashflowSummaryRow> getCashflowSummary(
       SummaryPeriod period, LocalDate from, LocalDate to) {
     if (period == null) period = SummaryPeriod.DAILY;
@@ -256,6 +291,9 @@ public class ReportService {
     return out;
   }
 
+  /**
+   * Genera PDF del reporte de cashflow.
+   */
   public byte[] generateCashflowSummaryPdf(SummaryPeriod period, LocalDate from, LocalDate to) {
     List<CashflowSummaryRow> summary = getCashflowSummary(period, from, to);
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -327,7 +365,18 @@ public class ReportService {
     return baos.toByteArray();
   }
 
-  // ==== Profit (Ganancias) ====
+  // ============================================================================
+  // REPORTE: Ganancias (Profit) - Método FIFO
+  // ============================================================================
+
+  /**
+   * Calcula ganancias usando método FIFO (First In, First Out).
+   * Compara el costo de cada venta con su ingreso para calcular ganancia real.
+   * @param period Tipo de período
+   * @param from Fecha inicio
+   * @param to Fecha fin
+   * @return Lista con ingresos, costos y ganancia por período
+   */
   public List<ProfitSummaryRow> getProfitSummary(
       SummaryPeriod period, LocalDate from, LocalDate to) {
     if (period == null) period = SummaryPeriod.DAILY;
@@ -349,49 +398,59 @@ public class ReportService {
     Map<Bucket, ProfitAgg> aggPerBucket = new LinkedHashMap<>();
     for (Bucket b : buckets) aggPerBucket.put(b, new ProfitAgg());
 
+    // -----------------------------------------------------------------------------
+    // Paso 1: Obtener todos los items de venta del período
+    // -----------------------------------------------------------------------------
     LocalDateTime startDT = start.atStartOfDay();
     LocalDateTime endDT = end.atTime(LocalTime.MAX);
     List<SaleItem> items = saleItemRepository.findItemsBetween(startDT, endDT);
 
-    // Reunir productos involucrados
+    // -----------------------------------------------------------------------------
+    // Paso 2: Identificar qué productos se vendieron
+    // -----------------------------------------------------------------------------
     Set<Long> productIds = new HashSet<>();
     for (SaleItem si : items) if (si.getProduct() != null) productIds.add(si.getProduct().getId());
 
-    // Obtener compras (COMPLETED) hasta end, ordenadas por fecha ascendente
+    // -----------------------------------------------------------------------------
+    // Paso 3: Obtener las compras de esos productos (para calcular costo)
+    // -----------------------------------------------------------------------------
     List<PurchaseItem> purchases =
         productIds.isEmpty()
             ? Collections.emptyList()
             : purchaseItemRepository.findAllForProductsUpToDate(
                 productIds, endDT, PurchaseStatus.COMPLETED);
 
-    // Estructuras FIFO y estado de costos conocidos por producto
-    Map<Long, Deque<StockBatch>> fifoByProduct = new HashMap<>();
-    Map<Long, BigDecimal> lastKnownCost = new HashMap<>();
+    // -----------------------------------------------------------------------------
+    // Paso 4: Calcular costo de cada venta usando FIFO
+    // FIFO = First In, First Out (primero en entrar, primero en salir)
+    // Ejemplo: Si compré 10 unidades a $100 y después 10 a $150,
+    //          y vendo 15, las primeras 10 cuestan $100 y las otras 5 cuestan $150
+    // -----------------------------------------------------------------------------
+    Map<Long, Deque<StockBatch>> fifoByProduct = new HashMap<>();  // Stock disponible por producto
+    Map<Long, BigDecimal> lastKnownCost = new HashMap<>();         // Último costo conocido
 
     int pIndex = 0;
-    // Consumir ventas en orden cronológico para calcular COGS por ítem
+    // -----------------------------------------------------------------------------
+    // Paso 5: Procesar cada venta y calcular su costo (COGS)
+    // -----------------------------------------------------------------------------
     for (SaleItem si : items) {
-      if (si.getProduct() == null
-          || si.getQuantity() == null
-          || si.getUnitPrice() == null
-          || si.getSale() == null) continue;
-      long pid = si.getProduct().getId();
-      int qty = si.getQuantity();
+      // Ignorar items inválidos
+      if (si.getProduct() == null || si.getQuantity() == null || si.getUnitPrice() == null || si.getSale() == null) continue;
+      
+      long productId = si.getProduct().getId();
+      int quantity = si.getQuantity();
       BigDecimal unitRevenue = si.getUnitPrice();
-      BigDecimal revenue = unitRevenue.multiply(BigDecimal.valueOf(qty));
+      BigDecimal revenue = unitRevenue.multiply(BigDecimal.valueOf(quantity));
 
-      // Incorporar compras que ocurren hasta la fecha/hora de esta venta (inclusive)
+      // Agregar nuevas compras al stock disponible (las que ocurrieron antes de esta venta)
       LocalDateTime saleAt = si.getSale().getSaleDate();
       while (pIndex < purchases.size()) {
         PurchaseItem pi = purchases.get(pIndex);
-        if (pi.getPurchase() != null
-            && pi.getPurchase().getCreatedAt() != null
+        if (pi.getPurchase() != null && pi.getPurchase().getCreatedAt() != null
             && !pi.getPurchase().getCreatedAt().isAfter(saleAt)) {
           if (pi.getProduct() != null && pi.getQuantity() != null && pi.getCost() != null) {
             long pPid = pi.getProduct().getId();
-            fifoByProduct
-                .computeIfAbsent(pPid, k -> new ArrayDeque<>())
-                .addLast(new StockBatch(pPid, pi.getQuantity(), pi.getCost()));
+            fifoByProduct.computeIfAbsent(pPid, k -> new ArrayDeque<>()).addLast(new StockBatch(pPid, pi.getQuantity(), pi.getCost()));
             lastKnownCost.put(pPid, pi.getCost());
           }
           pIndex++;
@@ -400,26 +459,27 @@ public class ReportService {
         }
       }
 
-      BigDecimal cogs = BigDecimal.ZERO;
-      Deque<StockBatch> q = fifoByProduct.getOrDefault(pid, new ArrayDeque<>());
-      while (qty > 0) {
+      // Calcular costo de esta venta usando FIFO
+      BigDecimal cogs = BigDecimal.ZERO;  // COGS = Cost of Goods Sold (Costo de los bienes vendidos)
+      Deque<StockBatch> q = fifoByProduct.getOrDefault(productId, new ArrayDeque<>());
+      while (quantity > 0) {
         if (!q.isEmpty()) {
+          // Usar stock más antiguo primero
           StockBatch batch = q.peekFirst();
-          int take = Math.min(qty, batch.remaining);
+          int take = Math.min(quantity, batch.remaining);
           cogs = cogs.add(batch.cost.multiply(BigDecimal.valueOf(take)));
           batch.remaining -= take;
-          qty -= take;
+          quantity -= take;
           if (batch.remaining == 0) q.pollFirst();
         } else {
-          // Sin stock en compras previas: usar último costo conocido o 0
-          BigDecimal fallback = lastKnownCost.getOrDefault(pid, BigDecimal.ZERO);
-          int take = qty;
-          cogs = cogs.add(fallback.multiply(BigDecimal.valueOf(take)));
-          qty = 0;
+          // No hay stock: usar último costo conocido o 0
+          BigDecimal fallback = lastKnownCost.getOrDefault(productId, BigDecimal.ZERO);
+          cogs = cogs.add(fallback.multiply(BigDecimal.valueOf(quantity)));
+          quantity = 0;
         }
       }
 
-      // Bucket por fecha de venta
+      // Asignar al bucket (período) correspondiente
       LocalDate d = si.getSale().getSaleDate().toLocalDate();
       Bucket target = null;
       for (Bucket b : buckets) {
@@ -452,6 +512,9 @@ public class ReportService {
     return out;
   }
 
+  /**
+   * Genera PDF del reporte de ganancias.
+   */
   public byte[] generateProfitSummaryPdf(SummaryPeriod period, LocalDate from, LocalDate to) {
     List<ProfitSummaryRow> summary = getProfitSummary(period, from, to);
 
