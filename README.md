@@ -11,13 +11,14 @@ Antes de arrancar, vas a necesitar:
 | Java JDK | 17+ | `java -version` |
 | Maven | 3.6+ | `mvn -version` |
 | Node.js | 18+ | `node -v` |
+| npm | Viene con Node.js | `npm -v` |
 | MySQL | 8.0+ | `mysql --version` |
 
 Si no tenés alguno, los links de descarga están al final de este archivo.
 
 ## Instalación paso a paso
 
-### 1.1 Instalar Homebrew (macOS)
+### 1. Instalar Homebrew (macOS)
 
 Si usás macOS y no tenés Homebrew, primero instalalo. Es un gestor de paquetes muy útil que te va a facilitar instalar todo lo demás:
 
@@ -31,14 +32,91 @@ Seguí las instrucciones en pantalla. Después de instalar, verificá que funcio
 brew --version
 ```
 
-### 2. Clonar y entrar al proyecto
+### 2. Instalar Java JDK
+
+El backend está hecho en Java y necesita JDK 17 o superior. Si no lo tenés:
+
+**Opción A: Con Homebrew (macOS)**
+```bash
+brew install openjdk@17
+```
+
+**Opción B: Instalador oficial (Windows/macOS/Linux)**
+1. Descargá el instalador de https://adoptium.net/
+2. Ejecutá el instalador y seguí los pasos
+
+**Opción C: Con SDKMAN (Linux/macOS)**
+```bash
+curl -s "https://get.sdkman.io" | bash
+sdk install java 17.0.12-tem
+```
+
+Verificá que esté instalado:
+```bash
+java -version
+```
+
+### 3. Instalar Maven
+
+Maven se usa para compilar y ejecutar el backend Java. Si no lo tenés:
+
+**Opción A: Con Homebrew (macOS)**
+```bash
+brew install maven
+```
+
+**Opción B: Instalador oficial (Windows/Linux)**
+1. Descargá Maven de https://maven.apache.org/download.cgi
+2. Extraé el archivo y movelo a una carpeta (ej: `C:\Program Files\Apache\maven` en Windows o `/opt/maven` en Linux)
+3. Agregá la carpeta `bin` al PATH del sistema
+
+**Opción C: Con SDKMAN (Linux/macOS)**
+```bash
+curl -s "https://get.sdkman.io" | bash
+sdk install maven
+```
+
+Verificá que esté instalado:
+```bash
+mvn -version
+```
+
+### 4. Instalar Node.js y npm
+
+Si no tenés Node.js (que incluye npm), hay varias formas de instalarlo:
+
+**Opción A: Con Homebrew (macOS)**
+```bash
+brew install node
+```
+
+**Opción B: Instalador oficial (Windows/macOS/Linux)**
+1. Descargá el instalador de https://nodejs.org/
+2. Ejecutá el instalador y seguí los pasos
+
+**Opción C: Con nvm (recomendado para desarrolladores)**
+Permite tener múltiples versiones de Node.js:
+```bash
+# Instalar nvm
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+# Instalar Node.js LTS
+nvm install --lts
+```
+
+Verificá que esté instalado:
+```bash
+node -v
+npm -v
+```
+
+### 5. Clonar y entrar al proyecto
 
 ```bash
 git clone <url-del-repo> sgik
 cd sgik
 ```
 
-### 2. Crear la base de datos
+### 6. Crear la base de datos
 
 Primero instalá MySQL si no lo tenés. En macOS con Homebrew es simple:
 
@@ -61,7 +139,7 @@ Si querés cargar algunos datos de prueba para empezar:
 mysql -u root -p < database/data-mysql.sql
 ```
 
-### 3. Configurar la conexión
+### 7. Configurar la conexión
 
 Por defecto el sistema usa `root`/`root` como usuario y contraseña de MySQL. Si usás otra cosa, editá `backend/src/main/resources/application.properties`:
 
@@ -70,13 +148,13 @@ spring.datasource.username=tu_usuario
 spring.datasource.password=tu_password
 ```
 
-### 4. Instalar dependencias del frontend
+### 8. Instalar dependencias del frontend
 
 ```bash
 npm install
 ```
 
-### 5. Iniciar el backend
+### 9. Iniciar el backend
 
 ```bash
 cd backend
@@ -87,7 +165,7 @@ El backend va a estar en http://localhost:8080
 
 La primera vez que inicia, si la tabla de usuarios está vacía, crea automáticamente un admin y un cajero.
 
-### 6. Iniciar el frontend
+### 10. Iniciar el frontend
 
 En otra terminal, desde la raíz del proyecto:
 
@@ -121,7 +199,7 @@ Este script verifica que tengas todo instalado, compila el backend, instala depe
 
 ### "Java no encontrado"
 
-Instalalo:
+Instalalo como se indica en la sección 2 de este documento:
 - macOS: `brew install openjdk@17`
 - Ubuntu: `sudo apt install openjdk-17-jdk`
 - Windows: Descargalo de https://adoptium.net/
@@ -156,12 +234,17 @@ Y que la base de datos exista:
 mysql -u root -p -e "SHOW DATABASES LIKE 'sgik';"
 ```
 
-### "mvn no encontrado"
+### "mvn no encontrado" o "npm no encontrado"
 
-Instalá Maven:
+**Instalá Maven:**
 - macOS: `brew install maven`
 - Linux: `sudo apt install maven`
 - Windows: Descargalo de https://maven.apache.org/download.cgi y agregalo al PATH
+
+**Instalá Node.js y npm:**
+- macOS: `brew install node`
+- Windows/Linux: Descargalo de https://nodejs.org/
+- O usá nvm: https://github.com/nvm-sh/nvm
 
 ## Estructura del proyecto
 
