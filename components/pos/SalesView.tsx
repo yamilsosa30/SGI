@@ -254,19 +254,15 @@ export default function SalesView(props: SalesViewProps) {
                     <td>${formatNumberEs(price, 2)}{it.soldByWeight ? "/kg" : ""}</td>
                     <td>
                       <input
-                        type="number"
-                        min="0"
-                        max="100"
-                        step="0.5"
-                        value={interestRate}
-                        onChange={(e) => {
+                        type="text"
+                        inputMode="decimal"
+                        defaultValue={it.interestRate || 0}
+                        onBlur={(e) => {
                           const value = parseFloat(e.target.value) || 0;
                           if (value < 0 || value > 100) return;
-                          setCartItems((prev) => {
-                            const newItems = [...prev];
-                            newItems[idx] = { ...newItems[idx], interestRate: value };
-                            return newItems;
-                          });
+                          const newCart = [...cartItems];
+                          newCart[idx] = { ...newCart[idx], interestRate: value };
+                          setCartItems(newCart);
                         }}
                         className="w-16 text-center border rounded-md px-1"
                         placeholder="%"
