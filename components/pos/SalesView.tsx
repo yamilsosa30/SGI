@@ -253,23 +253,6 @@ export default function SalesView(props: SalesViewProps) {
                     <td>{it.barcode}</td>
                     <td>${formatNumberEs(price, 2)}{it.soldByWeight ? "/kg" : ""}</td>
                     <td>
-                      <input
-                        type="text"
-                        inputMode="decimal"
-                        defaultValue={it.interestRate || 0}
-                        onBlur={(e) => {
-                          const value = parseFloat(e.target.value) || 0;
-                          if (value < 0 || value > 100) return;
-                          const newCart = [...cartItems];
-                          newCart[idx] = { ...newCart[idx], interestRate: value };
-                          setCartItems(newCart);
-                        }}
-                        className="w-16 text-center border rounded-md px-1"
-                        placeholder="%"
-                      />
-                      <span className="ml-1 text-sm text-gray-500">%</span>
-                    </td>
-                    <td>
                       {it.soldByWeight ? (
                         <div className="flex items-center border rounded-md">
                           <input
