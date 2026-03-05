@@ -7,6 +7,7 @@ public class SaleItemRequest {
   private Integer quantity;
   private BigDecimal unitPrice;
   private Boolean soldByWeight;
+  private BigDecimal interestRate;
 
   // Constructors
   public SaleItemRequest() {}
@@ -42,6 +43,14 @@ public class SaleItemRequest {
 
   public void setSoldByWeight(Boolean soldByWeight) {
     this.soldByWeight = soldByWeight;
+  }
+
+  public BigDecimal getInterestRate() {
+    return interestRate;
+  }
+
+  public void setInterestRate(BigDecimal interestRate) {
+    this.interestRate = interestRate;
   }
 
   /**

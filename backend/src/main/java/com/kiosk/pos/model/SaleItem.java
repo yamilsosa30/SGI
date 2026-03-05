@@ -39,6 +39,9 @@ public class SaleItem {
   @Column(nullable = false, precision = 10, scale = 2)
   private BigDecimal subtotal;
 
+  @Column(name = "interest_rate", precision = 5, scale = 2)
+  private BigDecimal interestRate;
+
   @PrePersist
   @PreUpdate
   public void computeSubtotal() {
@@ -53,14 +56,24 @@ public class SaleItem {
       } catch (Exception ignored) {
       }
 
+      BigDecimal baseSubtotal;
       if (byWeight) {
         // quantity viene en gramos; convertir a kilos para el cálculo del precio (2 decimales)
         BigDecimal weightInKg =
             BigDecimal.valueOf(quantity).divide(BigDecimal.valueOf(1000), 2, RoundingMode.HALF_UP);
-        this.subtotal = unitPrice.multiply(weightInKg).setScale(2, RoundingMode.HALF_UP);
+        baseSubtotal = unitPrice.multiply(weightInKg).setScale(2, RoundingMode.HALF_UP);
       } else {
-        this.subtotal =
+        baseSubtotal =
             unitPrice.multiply(BigDecimal.valueOf(quantity)).setScale(2, RoundingMode.HALF_UP);
+      }
+      
+      // Si hay tasa de interés, incluirla en el subtotal
+      if (interestRate != null && interestRate.compareTo(BigDecimal.ZERO) > 0) {
+        BigDecimal interest = baseSubtotal.multiply(interestRate)
+            .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+        this.subtotal = baseSubtotal.add(interest);
+      } else {
+        this.subtotal = baseSubtotal;
       }
     }
   }

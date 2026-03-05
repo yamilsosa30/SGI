@@ -8,6 +8,7 @@ type CartItem = {
   price: number
   quantity: number
   soldByWeight?: boolean
+  interestRate?: number
 }
 
 /**
@@ -61,7 +62,10 @@ export function useCart() {
     return cartItems.reduce((sum, item) => {
       const price = Number(item.price) || 0
       const qty = item.quantity || 1
-      return sum + (item.soldByWeight ? price * (qty / 1000) : price * qty)
+      const baseSubtotal = item.soldByWeight ? price * (qty / 1000) : price * qty
+      // Agregar interés si existe
+      const interest = item.interestRate ? baseSubtotal * (item.interestRate / 100) : 0
+      return sum + baseSubtotal + interest
     }, 0)
   }
 
@@ -74,12 +78,13 @@ export function useCart() {
     
     setProcessingPayment(true)
     try {
-      // Preparar ítems: incluir soldByWeight y cantidades correctas
+      // Preparar ítems: incluir soldByWeight, interestRate y cantidades correctas
       const items = cartItems.map(item => ({
         productId: Number(item.id),
         quantity: item.quantity || 1,
         unitPrice: Number(item.price) || 0,
         soldByWeight: !!item.soldByWeight,
+        interestRate: item.interestRate || null,
       }))
 
       const total = calculateTotal()

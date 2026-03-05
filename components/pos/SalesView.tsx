@@ -227,27 +227,52 @@ export default function SalesView(props: SalesViewProps) {
                 <th>Precio Unit.</th>
                 <th>Cantidad/Peso</th>
                 <th>Subtotal</th>
+                <th>Interés %</th>
                 <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
               {cartItems.length === 0 && (
                 <tr>
-                  <td colSpan={6}>Carrito vacío</td>
+                  <td colSpan={7}>Carrito vacío</td>
                 </tr>
               )}
               {cartItems.map((it, idx) => {
                 const quantity = it.quantity || 1;
                 const price = Number(it.price || 0);
-                const subtotal = it.soldByWeight 
+                const interestRate = it.interestRate || 0;
+                const baseSubtotal = it.soldByWeight 
                   ? price * (quantity / 1000) // Convertir gramos a kilos para el cálculo
                   : price * quantity;
+                const interestAmount = baseSubtotal * (interestRate / 100);
+                const subtotal = baseSubtotal + interestAmount;
                 
                 return (
                   <tr key={`${it.id}-${idx}`}>
                     <td>{it.name}</td>
                     <td>{it.barcode}</td>
                     <td>${formatNumberEs(price, 2)}{it.soldByWeight ? "/kg" : ""}</td>
+                    <td>
+                      <input
+                        type="number"
+                        min="0"
+                        max="100"
+                        step="0.5"
+                        value={interestRate}
+                        onChange={(e) => {
+                          const value = parseFloat(e.target.value) || 0;
+                          if (value < 0 || value > 100) return;
+                          setCartItems((prev) => {
+                            const newItems = [...prev];
+                            newItems[idx] = { ...newItems[idx], interestRate: value };
+                            return newItems;
+                          });
+                        }}
+                        className="w-16 text-center border rounded-md px-1"
+                        placeholder="%"
+                      />
+                      <span className="ml-1 text-sm text-gray-500">%</span>
+                    </td>
                     <td>
                       {it.soldByWeight ? (
                         <div className="flex items-center border rounded-md">
@@ -353,7 +378,9 @@ export default function SalesView(props: SalesViewProps) {
                 ${formatNumberEs(cartItems.reduce((sum, i) => {
                   const price = Number(i.price || 0);
                   const quantity = i.quantity || 1;
-                  return sum + (i.soldByWeight ? price * (quantity / 1000) : price * quantity);
+                  const baseSubtotal = i.soldByWeight ? price * (quantity / 1000) : price * quantity;
+                  const interest = i.interestRate ? baseSubtotal * (i.interestRate / 100) : 0;
+                  return sum + baseSubtotal + interest;
                 }, 0), 2)}
               </div>
             </div>
