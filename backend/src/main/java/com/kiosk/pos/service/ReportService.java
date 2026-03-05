@@ -78,6 +78,16 @@ public class ReportService {
   // REPORTE: Resumen de Ventas
   // ============================================================================
 
+  // Método helper para calcular el total de una venta desde los items (incluye interés)
+  private BigDecimal calculateSaleTotal(Sale s) {
+    if (s.getItems() == null || s.getItems().isEmpty()) {
+      return s.getTotal() != null ? s.getTotal() : BigDecimal.ZERO;
+    }
+    return s.getItems().stream()
+        .map(SaleItem::getSubtotal)
+        .reduce(BigDecimal.ZERO, BigDecimal::add);
+  }
+
   /**
    * Genera reporte de ventas agrupado por período.
    * @param period Tipo de período (DAILY, WEEKLY, MONTHLY, YEARLY)
@@ -112,6 +122,13 @@ public class ReportService {
     List<Sale> sales =
         saleRepository.findBySaleDateBetween(start.atStartOfDay(), end.atTime(LocalTime.MAX));
 
+    // Forzar carga de items para cada venta
+    for (Sale s : sales) {
+      if (s.getItems() != null) {
+        s.getItems().size(); // Force load
+      }
+    }
+
     // Sumar por bucket
     Map<Bucket, BucketAgg> agg = new LinkedHashMap<>();
     for (Bucket b : buckets) agg.put(b, new BucketAgg());
@@ -121,7 +138,8 @@ public class ReportService {
         if ((d.isEqual(b.start) || d.isAfter(b.start)) && (d.isEqual(b.end) || d.isBefore(b.end))) {
           BucketAgg a = agg.get(b);
           a.transactions++;
-          a.total = a.total.add(s.getTotal() == null ? BigDecimal.ZERO : s.getTotal());
+          // Usar calculateSaleTotal que suma desde los items (incluye interés)
+          a.total = a.total.add(calculateSaleTotal(s));
           break;
         }
       }
@@ -251,17 +269,24 @@ public class ReportService {
     LocalDateTime startDT = start.atStartOfDay();
     LocalDateTime endDT = end.atTime(LocalTime.MAX);
     List<Sale> sales = saleRepository.findBySaleDateBetween(startDT, endDT);
+    // Forzar carga de items para cada venta
+    for (Sale s : sales) {
+      if (s.getItems() != null) {
+        s.getItems().size(); // Force load
+      }
+    }
     List<Purchase> purchases =
         purchaseRepository.findByStatusAndCreatedAtBetween(
             PurchaseStatus.COMPLETED, startDT, endDT);
 
     // Bucketear ventas (ingresos)
     for (Sale s : sales) {
-      if (s.getSaleDate() == null || s.getTotal() == null) continue;
+      if (s.getSaleDate() == null) continue;
       LocalDate d = s.getSaleDate().toLocalDate();
       for (Bucket b : buckets) {
         if ((d.isEqual(b.start) || d.isAfter(b.start)) && (d.isEqual(b.end) || d.isBefore(b.end))) {
-          salesTotals.put(b, salesTotals.get(b).add(s.getTotal()));
+          // Usar calculateSaleTotal que suma desde los items (incluye interés)
+          salesTotals.put(b, salesTotals.get(b).add(calculateSaleTotal(s)));
           break;
         }
       }
