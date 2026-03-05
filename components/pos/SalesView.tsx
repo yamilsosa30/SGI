@@ -340,6 +340,51 @@ export default function SalesView(props: SalesViewProps) {
                     </td>
                     <td className="font-medium">${formatNumberEs(subtotal, 2)}</td>
                     <td>
+                      <div className="flex items-center border rounded-md">
+                        <button 
+                          type="button"
+                          className="px-2 py-1 text-lg border-r hover:bg-gray-100"
+                          onClick={() => {
+                            const newCart = [...cartItems];
+                            const currentValue = newCart[idx].interestRate || 0;
+                            newCart[idx] = { ...newCart[idx], interestRate: Math.max(0, currentValue - 1) };
+                            setCartItems(newCart);
+                          }}
+                        >
+                          -
+                        </button>
+                        <input
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          max="100"
+                          value={it.interestRate || 0}
+                          onChange={(e) => {
+                            const value = parseFloat(e.target.value) || 0;
+                            if (value < 0 || value > 100) return;
+                            const newCart = [...cartItems];
+                            newCart[idx] = { ...newCart[idx], interestRate: value };
+                            setCartItems(newCart);
+                          }}
+                          className="w-12 text-center border-none focus:outline-none focus:ring-0"
+                          placeholder="%"
+                        />
+                        <span className="px-1 text-sm text-gray-500">%</span>
+                        <button 
+                          type="button"
+                          className="px-2 py-1 text-lg border-l hover:bg-gray-100"
+                          onClick={() => {
+                            const newCart = [...cartItems];
+                            const currentValue = newCart[idx].interestRate || 0;
+                            newCart[idx] = { ...newCart[idx], interestRate: Math.min(100, currentValue + 1) };
+                            setCartItems(newCart);
+                          }}
+                        >
+                          +
+                        </button>
+                      </div>
+                    </td>
+                    <td>
                       <Button size="sm" variant="destructive" onClick={() => setCartItems((prev) => prev.filter((_, i) => i !== idx))}>
                         Eliminar
                       </Button>
