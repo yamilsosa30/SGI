@@ -58,7 +58,7 @@ if %count% gtr 24 (
     goto :open_browser
 )
 timeout /t 5 /nobreak >nul
-docker exec sgik-backend wget --spider -q http://localhost:8080/actuator/health 2>nul
+curl -s http://localhost:8080/actuator/health 2>nul | findstr "UP" >nul
 if errorlevel 1 (
     echo         Esperando... (%count%/24)
     goto :wait_backend
@@ -83,4 +83,3 @@ start http://localhost:3000
 
 echo Presiona cualquier tecla para cerrar esta ventana...
 pause >nul
-
