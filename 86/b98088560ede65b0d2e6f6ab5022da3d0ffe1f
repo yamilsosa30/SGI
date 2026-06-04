@@ -1,0 +1,90 @@
+docker/.env.example
+  s_d51bb237e8db78::t_f95b68599c02b9 1-5
+paquete-cliente/scripts/restore-db.bat
+  s_d51bb237e8db78::t_8952fc6aa7c290 1-32
+paquete-cliente/7-VER-LOGS.bat
+  s_d51bb237e8db78::t_8952fc6aa7c290 1-3
+docker/scripts/prepare-client-package.sh
+  s_d51bb237e8db78::t_8952fc6aa7c290 1-26
+paquete-cliente/6-RESTAURAR-BACKUP.bat
+  s_d51bb237e8db78::t_8952fc6aa7c290 1-3
+cliente-windows/2-INICIAR-SISTEMA.bat
+  s_d51bb237e8db78::t_f95b68599c02b9 1-3
+paquete-cliente/5-BACKUP.bat
+  s_d51bb237e8db78::t_8952fc6aa7c290 1-3
+paquete-cliente/scripts/start.bat
+  s_d51bb237e8db78::t_8952fc6aa7c290 1-40,42-53
+  s_d51bb237e8db78::t_c18c47e20c0dea 41
+backend/pom.xml
+  s_d51bb237e8db78::t_f95b68599c02b9 36-40
+docker-compose.yml
+  s_d51bb237e8db78::t_ff94d856e4e5ef 68
+cliente-windows/5-BACKUP.bat
+  s_d51bb237e8db78::t_f95b68599c02b9 1-3
+paquete-cliente/.env.example
+  s_d51bb237e8db78::t_8952fc6aa7c290 1-5
+paquete-cliente/1-INSTALAR-PRIMERA-VEZ.bat
+  s_d51bb237e8db78::t_8952fc6aa7c290 1-3
+cliente-windows/3-DETENER-SISTEMA.bat
+  s_d51bb237e8db78::t_f95b68599c02b9 1-3
+paquete-cliente/scripts/backup-db.bat
+  s_d51bb237e8db78::t_8952fc6aa7c290 1-21
+docker/scripts/build-images.bat
+  s_d51bb237e8db78::t_8952fc6aa7c290 119-121,125,129-130
+paquete-cliente/scripts/stop.bat
+  s_d51bb237e8db78::t_8952fc6aa7c290 1-7
+cliente-windows/LEEME-PRIMERO.txt
+  s_d51bb237e8db78::t_f95b68599c02b9 1-73
+backend/src/main/java/com/kiosk/pos/security/SecurityConfig.java
+  s_d51bb237e8db78::t_f95b68599c02b9 46
+paquete-cliente/4-VER-ESTADO.bat
+  s_d51bb237e8db78::t_8952fc6aa7c290 1-3
+docker/scripts/prepare-client-package.bat
+  s_d51bb237e8db78::t_8952fc6aa7c290 1-28
+paquete-cliente/scripts/status.bat
+  s_d51bb237e8db78::t_8952fc6aa7c290 1-19
+paquete-cliente/LEEME.txt
+  s_d51bb237e8db78::t_8952fc6aa7c290 1-52
+docker/scripts/start.bat
+  s_d51bb237e8db78::t_c18c47e20c0dea 61
+paquete-cliente/2-INICIAR-SISTEMA.bat
+  s_d51bb237e8db78::t_8952fc6aa7c290 1-3
+paquete-cliente/3-DETENER-SISTEMA.bat
+  s_d51bb237e8db78::t_8952fc6aa7c290 1-3
+cliente-windows/4-VER-ESTADO.bat
+  s_d51bb237e8db78::t_f95b68599c02b9 1-3
+paquete-cliente/scripts/install-offline.bat
+  s_d51bb237e8db78::t_8952fc6aa7c290 1-57
+backend/Dockerfile
+  s_d51bb237e8db78::t_c18c47e20c0dea 33-37
+cliente-windows/6-RESTAURAR-BACKUP.bat
+  s_d51bb237e8db78::t_f95b68599c02b9 1-3
+cliente-windows/1-INSTALAR-PRIMERA-VEZ.bat
+  s_d51bb237e8db78::t_f95b68599c02b9 1-3
+paquete-cliente/docker-compose.yml
+  s_d51bb237e8db78::t_ff94d856e4e5ef 46
+  s_d51bb237e8db78::t_8952fc6aa7c290 1-45,47-54
+paquete-cliente/scripts/logs.bat
+  s_d51bb237e8db78::t_8952fc6aa7c290 1-4
+cliente-windows/7-VER-LOGS.bat
+  s_d51bb237e8db78::t_f95b68599c02b9 1-3
+docker-compose.offline.yml
+  s_d51bb237e8db78::t_f95b68599c02b9 53
+  s_d51bb237e8db78::t_ff94d856e4e5ef 68
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "86b98088560ede65b0d2e6f6ab5022da3d0ffe1f",
+  "prompts": {},
+  "sessions": {
+    "s_d51bb237e8db78": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e8fc5-7e3a-7150-b1e9-ff43fa9ba285",
+        "model": "gpt-5.4"
+      },
+      "human_author": "axsosa <axel.sosa@mercadolibre.com>"
+    }
+  }
+}
