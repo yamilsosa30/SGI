@@ -227,21 +227,25 @@ export default function SalesView(props: SalesViewProps) {
                 <th>Precio Unit.</th>
                 <th>Cantidad/Peso</th>
                 <th>Subtotal</th>
+                <th>Interés %</th>
                 <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
               {cartItems.length === 0 && (
                 <tr>
-                  <td colSpan={6}>Carrito vacío</td>
+                  <td colSpan={7}>Carrito vacío</td>
                 </tr>
               )}
               {cartItems.map((it, idx) => {
                 const quantity = it.quantity || 1;
                 const price = Number(it.price || 0);
-                const subtotal = it.soldByWeight 
+                const interestRate = it.interestRate || 0;
+                const baseSubtotal = it.soldByWeight 
                   ? price * (quantity / 1000) // Convertir gramos a kilos para el cálculo
                   : price * quantity;
+                const interestAmount = baseSubtotal * (interestRate / 100);
+                const subtotal = baseSubtotal + interestAmount;
                 
                 return (
                   <tr key={`${it.id}-${idx}`}>
@@ -336,6 +340,51 @@ export default function SalesView(props: SalesViewProps) {
                     </td>
                     <td className="font-medium">${formatNumberEs(subtotal, 2)}</td>
                     <td>
+                      <div className="flex items-center border rounded-md">
+                        <button 
+                          type="button"
+                          className="px-2 py-1 text-lg border-r hover:bg-gray-100"
+                          onClick={() => {
+                            const newCart = [...cartItems];
+                            const currentValue = newCart[idx].interestRate || 0;
+                            newCart[idx] = { ...newCart[idx], interestRate: Math.max(0, currentValue - 1) };
+                            setCartItems(newCart);
+                          }}
+                        >
+                          -
+                        </button>
+                        <input
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          max="100"
+                          value={it.interestRate || 0}
+                          onChange={(e) => {
+                            const value = parseFloat(e.target.value) || 0;
+                            if (value < 0 || value > 100) return;
+                            const newCart = [...cartItems];
+                            newCart[idx] = { ...newCart[idx], interestRate: value };
+                            setCartItems(newCart);
+                          }}
+                          className="w-12 text-center border-none focus:outline-none focus:ring-0"
+                          placeholder="%"
+                        />
+                        <span className="px-1 text-sm text-gray-500">%</span>
+                        <button 
+                          type="button"
+                          className="px-2 py-1 text-lg border-l hover:bg-gray-100"
+                          onClick={() => {
+                            const newCart = [...cartItems];
+                            const currentValue = newCart[idx].interestRate || 0;
+                            newCart[idx] = { ...newCart[idx], interestRate: Math.min(100, currentValue + 1) };
+                            setCartItems(newCart);
+                          }}
+                        >
+                          +
+                        </button>
+                      </div>
+                    </td>
+                    <td>
                       <Button size="sm" variant="destructive" onClick={() => setCartItems((prev) => prev.filter((_, i) => i !== idx))}>
                         Eliminar
                       </Button>
@@ -353,7 +402,9 @@ export default function SalesView(props: SalesViewProps) {
                 ${formatNumberEs(cartItems.reduce((sum, i) => {
                   const price = Number(i.price || 0);
                   const quantity = i.quantity || 1;
-                  return sum + (i.soldByWeight ? price * (quantity / 1000) : price * quantity);
+                  const baseSubtotal = i.soldByWeight ? price * (quantity / 1000) : price * quantity;
+                  const interest = i.interestRate ? baseSubtotal * (i.interestRate / 100) : 0;
+                  return sum + baseSubtotal + interest;
                 }, 0), 2)}
               </div>
             </div>
@@ -452,29 +503,35 @@ export default function SalesView(props: SalesViewProps) {
                         <td colSpan={5}>Sin ventas en el rango</td>
                       </tr>
                     )}
-                    {pageItems.map((s: any) => (
-                      <tr key={s.id}>
-                        <td>{s.saleDate ? new Date(s.saleDate).toLocaleString() : "-"}</td>
-                        <td>{s.paymentMethod}</td>
-                        <td>{Array.isArray(s.items) ? s.items.length : 0}</td>
-                        <td>${formatNumberEs(Number(s.total ?? 0), 2)}</td>
-                        <td>
-                          <div className="flex gap-2">
-                            <Button 
-                              size="sm" 
-                              variant="outline" 
-                              onClick={() => {
-                                setSelectedSale(s)
-                                setShowSaleDetails(true)
-                              }}
-                            >
-                              <Eye className="size-4" />
-                            </Button>
-                            <Button size="sm" variant="destructive" onClick={() => onDeleteSale(s.id)}>Eliminar</Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
+                    {pageItems.map((s: any) => {
+                      // Calcular total desde los items para incluir intereses
+                      const calculatedTotal = s.items?.length > 0 
+                        ? s.items.reduce((sum: number, item: any) => sum + Number(item.subtotal || 0), 0)
+                        : Number(s.total || 0)
+                      return (
+                        <tr key={s.id}>
+                          <td>{s.saleDate ? new Date(s.saleDate).toLocaleString() : "-"}</td>
+                          <td>{s.paymentMethod}</td>
+                          <td>{Array.isArray(s.items) ? s.items.length : 0}</td>
+                          <td>${formatNumberEs(calculatedTotal, 2)}</td>
+                          <td>
+                            <div className="flex gap-2">
+                              <Button 
+                                size="sm" 
+                                variant="outline" 
+                                onClick={() => {
+                                  setSelectedSale(s)
+                                  setShowSaleDetails(true)
+                                }}
+                              >
+                                <Eye className="size-4" />
+                              </Button>
+                              <Button size="sm" variant="destructive" onClick={() => onDeleteSale(s.id)}>Eliminar</Button>
+                            </div>
+                          </td>
+                        </tr>
+                      )
+                    })}
                   </tbody>
                 </table>
 
@@ -525,6 +582,7 @@ export default function SalesView(props: SalesViewProps) {
                       <th className="text-left py-2">Código</th>
                       <th className="text-right py-2">Precio Unit.</th>
                       <th className="text-right py-2">Cantidad</th>
+                      <th className="text-right py-2">Interés %</th>
                       <th className="text-right py-2">Subtotal</th>
                     </tr>
                   </thead>
@@ -533,7 +591,8 @@ export default function SalesView(props: SalesViewProps) {
                       selectedSale.items.map((item: any, idx: number) => {
                         const quantity = item.quantity || 1
                         const price = Number(item.unitPrice || 0)
-                        // Usar el subtotal que viene del backend ya calculado correctamente
+                        const interestRate = item.interestRate || 0
+                        // El subtotal del backend ya incluye el interés
                         const subtotal = Number(item.subtotal || 0)
                         // Determinar si es por peso basado en la categoría del producto
                         const isByWeight = item.product?.category?.name === "VERDULERIA"
@@ -548,6 +607,9 @@ export default function SalesView(props: SalesViewProps) {
                             <td className="text-right py-2">
                               {isByWeight ? `${quantity}g` : quantity}
                             </td>
+                            <td className="text-right py-2">
+                              {interestRate > 0 ? `${interestRate}%` : "-"}
+                            </td>
                             <td className="text-right py-2 font-medium">
                               ${formatNumberEs(subtotal, 2)}
                             </td>
@@ -556,7 +618,7 @@ export default function SalesView(props: SalesViewProps) {
                       })
                     ) : (
                       <tr>
-                        <td colSpan={5} className="text-center py-4 text-muted-foreground">
+                        <td colSpan={6} className="text-center py-4 text-muted-foreground">
                           No hay items en esta venta
                         </td>
                       </tr>
@@ -564,9 +626,13 @@ export default function SalesView(props: SalesViewProps) {
                   </tbody>
                   <tfoot>
                     <tr className="border-t-2">
-                      <td colSpan={4} className="text-right py-2 font-semibold">Total:</td>
+                      <td colSpan={5} className="text-right py-2 font-semibold">Total:</td>
                       <td className="text-right py-2 font-bold text-lg">
-                        ${formatNumberEs(Number(selectedSale.total ?? 0), 2)}
+                        ${formatNumberEs(
+                          selectedSale.items?.length > 0
+                            ? selectedSale.items.reduce((sum: number, item: any) => sum + Number(item.subtotal || 0), 0)
+                            : Number(selectedSale.subtotal || 0)
+                        , 2)}
                       </td>
                     </tr>
                   </tfoot>

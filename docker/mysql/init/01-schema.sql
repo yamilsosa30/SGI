@@ -136,6 +136,7 @@ CREATE TABLE IF NOT EXISTS sale_items (
   quantity INT NOT NULL,
   unit_price DECIMAL(10,2) NOT NULL,
   subtotal DECIMAL(10,2) NOT NULL,
+  interest_rate DECIMAL(5,2) NULL,
   PRIMARY KEY (id),
   KEY idx_sale_items_sale (sale_id),
   KEY idx_sale_items_product (product_id),

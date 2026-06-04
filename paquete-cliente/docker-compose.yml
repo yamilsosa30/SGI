@@ -1,12 +1,4 @@
-# =============================================================================
-# Docker Compose - SGIK POS (Desarrollo con Build)
-# Uso: docker compose up --build
-# =============================================================================
-
 services:
-  # ---------------------------------------------------------------------------
-  # Base de datos MySQL
-  # ---------------------------------------------------------------------------
   mysql:
     image: mysql:8.0
     container_name: sgik-mysql
@@ -21,23 +13,16 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./docker/mysql/init:/docker-entrypoint-initdb.d:ro
+      - ./mysql/init:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-root}"]
       interval: 10s
       timeout: 5s
       retries: 10
       start_period: 30s
-    networks:
-      - sgik-network
 
-  # ---------------------------------------------------------------------------
-  # Backend Spring Boot
-  # ---------------------------------------------------------------------------
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    image: sgik-backend:1.0
     container_name: sgik-backend
     restart: unless-stopped
     depends_on:
@@ -52,16 +37,9 @@ services:
       SECURITY_JWT_EXPIRATION_MS: ${JWT_EXPIRATION:-28800000}
     ports:
       - "8080:8080"
-    networks:
-      - sgik-network
 
-  # ---------------------------------------------------------------------------
-  # Frontend Next.js
-  # ---------------------------------------------------------------------------
   frontend:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: sgik-frontend:1.0
     container_name: sgik-frontend
     restart: unless-stopped
     depends_on:
@@ -70,19 +48,7 @@ services:
       NODE_ENV: production
     ports:
       - "3000:3000"
-    networks:
-      - sgik-network
 
-# =============================================================================
-# Volúmenes persistentes
-# =============================================================================
 volumes:
   mysql_data:
     driver: local
-
-# =============================================================================
-# Red interna
-# =============================================================================
-networks:
-  sgik-network:
-    driver: bridge

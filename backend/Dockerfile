@@ -30,6 +30,11 @@ LABEL version="1.0"
 
 WORKDIR /app
 
+# Instalar curl para healthchecks del contenedor
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends curl && \
+    rm -rf /var/lib/apt/lists/*
+
 # Crear usuario no-root para seguridad
 RUN groupadd -g 1001 appgroup && \
     useradd -u 1001 -g appgroup -s /bin/bash appuser

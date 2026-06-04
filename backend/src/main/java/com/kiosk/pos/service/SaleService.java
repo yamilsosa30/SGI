@@ -62,6 +62,7 @@ public class SaleService {
                         .product(product)
                         .quantity(itemRequest.getQuantity())
                         .unitPrice(itemRequest.getUnitPrice())
+                        .interestRate(itemRequest.getInterestRate())
                         .build();
                 saleItems.add(saleItem);
 
@@ -107,7 +108,7 @@ public class SaleService {
 
     sale.setItems(saleItems);
 
-    // Total de la venta basado en los subtotales asignados a los ítems
+    // Total de la venta basado en los subtotales (que ya incluyen interés si lo hay)
     BigDecimal calculatedTotal =
         saleItems.stream().map(SaleItem::getSubtotal).reduce(BigDecimal.ZERO, BigDecimal::add);
     sale.setTotal(calculatedTotal.setScale(2, RoundingMode.HALF_UP));

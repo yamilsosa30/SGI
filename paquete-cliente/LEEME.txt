@@ -1,0 +1,52 @@
+SGIK POS - Paquete para cliente Windows
+======================================
+
+El cliente NO necesita el codigo fuente completo.
+Solo necesita esta carpeta "paquete-cliente" con su contenido.
+
+REQUISITO EN LA PC DEL CLIENTE
+------------------------------
+1. Instalar Docker Desktop
+2. Abrir Docker Desktop y esperar a que termine de iniciar
+
+INSTALACION EN LA PC DEL CLIENTE
+--------------------------------
+1. Ejecutar: 1-INSTALAR-PRIMERA-VEZ.bat
+2. Ejecutar: 2-INICIAR-SISTEMA.bat
+3. Abrir: http://localhost:3000
+
+USUARIO INICIAL
+---------------
+Usuario: admin
+Password: admin123
+
+ARCHIVOS INCLUIDOS
+------------------
+- images\                     Imagenes Docker exportadas
+- mysql\init\                Scripts iniciales de la base
+- scripts\                   Scripts internos
+- docker-compose.yml         Orquestacion del sistema
+- .env.example               Variables editables si un dia las necesitas
+
+ARCHIVOS DE USO DIARIO
+----------------------
+1-INSTALAR-PRIMERA-VEZ.bat
+2-INICIAR-SISTEMA.bat
+3-DETENER-SISTEMA.bat
+4-VER-ESTADO.bat
+5-BACKUP.bat
+6-RESTAURAR-BACKUP.bat
+7-VER-LOGS.bat
+
+ACTUALIZACION
+-------------
+Cuando haya una nueva version:
+1. Detener el sistema con 3-DETENER-SISTEMA.bat
+2. Reemplazar esta carpeta por la nueva
+3. Ejecutar otra vez 1-INSTALAR-PRIMERA-VEZ.bat
+4. Iniciar con 2-INICIAR-SISTEMA.bat
+
+NOTA SOBRE LOS DATOS
+--------------------
+Los datos quedan guardados en Docker en la PC del cliente.
+No se pierden por cerrar la aplicacion o reiniciar Windows.

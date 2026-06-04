@@ -1,0 +1,73 @@
+SGIK POS - Entrega para cliente Windows
+======================================
+
+Esta carpeta esta pensada para que el cliente use el sistema sin instalar
+Java, Node.js ni MySQL manualmente.
+
+REQUISITO UNICO EN LA PC DEL CLIENTE
+------------------------------------
+1. Instalar Docker Desktop
+   https://www.docker.com/products/docker-desktop
+
+2. Abrir Docker Desktop y esperar a que quede iniciado.
+
+QUE HAY QUE COPIAR A LA PC DEL CLIENTE
+--------------------------------------
+Copiar la carpeta completa "sgik" a la PC del cliente.
+
+MUY IMPORTANTE:
+No copies solo esta carpeta.
+Hay que copiar TODA la carpeta del proyecto porque los scripts de esta carpeta
+usan archivos de docker, base de datos y configuracion del sistema.
+
+PREPARACION EN TU PC ANTES DE ENTREGAR
+--------------------------------------
+1. En una PC con Internet y Docker, ejecutar:
+   docker\scripts\build-images.bat
+
+2. Verificar que existan estos archivos:
+   docker\images\mysql_8.tar
+   docker\images\sgik-backend_1.0.tar
+   docker\images\sgik-frontend_1.0.tar
+
+3. Copiar toda la carpeta "sgik" al cliente.
+
+ORDEN DE USO EN LA PC DEL CLIENTE
+---------------------------------
+1. Ejecutar: 1-INSTALAR-PRIMERA-VEZ.bat
+2. Ejecutar: 2-INICIAR-SISTEMA.bat
+3. Entrar a: http://localhost:3000
+
+DATOS DE INGRESO
+----------------
+Usuario: admin
+Password: admin123
+
+ARCHIVOS DE USO DIARIO
+----------------------
+1-INSTALAR-PRIMERA-VEZ.bat  -> Solo la primera vez
+2-INICIAR-SISTEMA.bat       -> Inicia el sistema
+3-DETENER-SISTEMA.bat       -> Detiene el sistema
+4-VER-ESTADO.bat            -> Muestra estado y salud
+5-BACKUP.bat                -> Guarda un backup de la base
+6-RESTAURAR-BACKUP.bat      -> Restaura un backup
+7-VER-LOGS.bat              -> Muestra logs por si algo falla
+
+DONDE QUEDAN LOS DATOS
+----------------------
+La base de datos queda guardada dentro de Docker en la misma PC del cliente.
+Aunque cierres el sistema o reinicies Windows, los datos se conservan.
+
+SI ACTUALIZAS EL SISTEMA
+------------------------
+1. En tu PC, volver a ejecutar:
+   docker\scripts\build-images.bat
+
+2. Reemplazar la carpeta "sgik" del cliente por la nueva version
+   manteniendo sus backups si hace falta.
+
+3. En la PC del cliente, ejecutar otra vez:
+   1-INSTALAR-PRIMERA-VEZ.bat
+
+4. Luego iniciar normal con:
+   2-INICIAR-SISTEMA.bat

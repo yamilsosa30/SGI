@@ -116,17 +116,19 @@ echo Imagenes exportadas en: docker\images\
 echo.
 dir docker\images\*.tar
 echo.
+echo Preparando carpeta de entrega para cliente...
+call docker\scripts\prepare-client-package.bat
+echo.
 echo ╔══════════════════════════════════════════════════════════════════════════╗
 echo ║                    SIGUIENTE PASO                                        ║
 echo ╠══════════════════════════════════════════════════════════════════════════╣
-echo ║   1. Copia toda la carpeta 'sgik' a un USB                               ║
+echo ║   1. Copia la carpeta 'dist\sgik-cliente-windows' a un USB              ║
 echo ║   2. En la PC destino (offline):                                         ║
 echo ║      - Instala Docker Desktop                                            ║
 echo ║      - Copia la carpeta desde el USB                                     ║
-echo ║      - Ejecuta: docker\scripts\install-offline.bat                       ║
-echo ║      - Ejecuta: docker\scripts\start.bat                                 ║
+echo ║      - Ejecuta: 1-INSTALAR-PRIMERA-VEZ.bat                               ║
+echo ║      - Ejecuta: 2-INICIAR-SISTEMA.bat                                    ║
 echo ╚══════════════════════════════════════════════════════════════════════════╝
 echo.
 
 pause
-
